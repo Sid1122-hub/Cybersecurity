@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1737021956 source:c:\users\msis\desktop\241059029_siddharth_hebbar\msis_2nd_sem\securecoding\lab1\opp.c
+	<stdlib.h>
+	"header.h"
+
+1737023217 source:c:\users\msis\desktop\241059029_siddharth_hebbar\msis_2nd_sem\securecoding\lab1\main.c
+	<assert.h>
+	<stdlib.h>
+	"header.h"
+
+1737018976 c:\users\msis\desktop\241059029_siddharth_hebbar\msis_2nd_sem\securecoding\lab1\header.h
+
