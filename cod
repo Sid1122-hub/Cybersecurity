@@ -1,0 +1,7 @@
+crackle -i filename -o decrypt.pcap
+aircrack-ng -b [BSSID] -w /usr/share/wordlists/rockyou.txt ptw.cap
+aircrack-ng ptw.cap
+
+tshark -r {pcap file} -Y "mqtt" -Tfields -mqtt.topic
+tshark -r {pcap file} -Y "mqtt" -Tfields -mqtt.msg
+echo "48656c6c6f2066726f6d20746865205061686f20626c6f636b696e6720636c69656e74" | xxd -r -p
