@@ -1,7 +1,32 @@
-crackle -i filename -o decrypt.pcap
-aircrack-ng -b [BSSID] -w /usr/share/wordlists/rockyou.txt ptw.cap
-aircrack-ng ptw.cap
+sudo apt install -y qemu-system-x86 wget
+sudo apt install docker.io -y
+sudo apt install -y docker.io qemu-system-x86\n
+sudo systemctl start docker
+sudo systemctl status docker
 
-tshark -r {pcap file} -Y "mqtt" -Tfields -mqtt.topic
-tshark -r {pcap file} -Y "mqtt" -Tfields -mqtt.msg
-echo "48656c6c6f2066726f6d20746865205061686f20626c6f636b696e6720636c69656e74" | xxd -r -p
+tar -xvf DC-4.ova
+qemu-img convert -f vmdk -O raw DC-4.vmdk dc4.raw
+ mkdir dc4-docker && cd dc4-docker
+qemu-img convert -O raw DC4-disk001.vmdk dc4.img**
+
+sudo qemu-img convert -f raw -O qcow2 dc4.img dc4.qcow2**
+mv ../dc4.raw
+
+**FROM ubuntu:latest**
+
+**RUN apt update && apt install -y qemu-system-x86**
+
+**COPY dc4.qcow2 /dc4.qcow2**
+
+**EXPOSE 80**
+
+**CMD ["qemu-system-x86_64", "-m", "2048", "-hda", "/dc4.qcow2", "-net", "nic", "-net", "user,hostfwd=tcp::80-:80", "-nographic"]**
+
+ docker build -t dc4-container .
+sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' dc4-container
+
+
+
+
+
+ Create Your Dockerfile with Vulnerable App
